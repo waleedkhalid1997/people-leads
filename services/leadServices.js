@@ -17,6 +17,22 @@ class leadService {
 
 	async createLeads(filePath = "./services/leads.csv") {
 
+
+		const https = require("https");
+		// URL of the image
+		const url = "https://www.digibution.net/CSV/leads.csv";
+
+		https.get(url, (res) => {
+			const path = "./services/leads.csv";
+			const writeStream = fs.createWriteStream(path);
+
+			res.pipe(writeStream);
+
+			writeStream.on("finish", () => {
+				writeStream.close();
+				console.log("Download Completed!");
+			})
+		})
 		await sleep(10000);
 		var jsonObj = {};
 
@@ -31,21 +47,19 @@ class leadService {
 		for (var i = 0; i < jsonObj.length; i++) {
 
 			try {
-
-
 				var options = {
 					'method': 'POST',
 					'url': 'https://www.digibutionnetwork.com/api/v2/leads/create',
 					'headers': {
 						'Content-Type': 'application/json; charset=utf-8',
-				 		'X-Api-Key': 'e86d6a94eea5e6e16e476410ee33a6e1',
+						'X-Api-Key': 'e86d6a94eea5e6e16e476410ee33a6e1',
 					},
 					formData: {
-						"lead_name": jsonObj[i].FirstName + ' ' + jsonObj[i].LastName,
-						"lead_email": jsonObj[i].Email,
-						"InvestmentFirm": jsonObj[i].InvestmentFirm,
-						"Title": jsonObj[i].Title,
-						"lead_phone": jsonObj[i].ContactNumber,
+						"lead_name": jsonObj[i].FirstName?jsonObj[i].FirstName:'' + ' ' + jsonObj[i].LastName ? jsonObj[i].LastName:'',
+						"lead_email": jsonObj[i].Email?jsonObj[i].Email:'',
+						"InvestmentFirm": jsonObj[i].InvestmentFirm ? jsonObj[i].InvestmentFirm:'',
+						"Title": jsonObj[i].Title ? jsonObj[i].Title:'',
+						"lead_phone": jsonObj[i].ContactNumber?jsonObj[i].ContactNumber:'',
 					}
 				};
 				request(options, function (error, response) {
