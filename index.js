@@ -1,19 +1,18 @@
-console.log(process.env.ENVIRONMENT)
 const config = require("./config/config");
-const bodyParser = require('body-parser');
 const express = require('express');
+require("dotenv").config();
 const app = express();
-
-
+console.log(process.env.ENVIRONMENT)
 const cors = require('cors');
-app.use(cors());
-
-app.options('*', cors());
-
-
-
 const routes = require('./routes');
-app.use("/api/v1/", bodyParser.json({ limit: "50mb" }), bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }), routes);
+global.dbConnErr = require('./config/db.config');
+global.dbConnErr();
+app.use(cors());
+app.options('*', cors());
+app.use(express.json());
+app.use(express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
+
+app.use("/api/v1", routes);
 
 
 app.get("/health", (req, res) => {
