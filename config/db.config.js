@@ -1,6 +1,7 @@
 'use strict';
 const mysql = require('mysql');
 const Connect = () => {
+  console.log(process.env.DB_HOST, process.env.DB_USERNAME);
   //local mysql db connection
   global.dbConn = mysql.createConnection({
     host: process.env.DB_HOST,
